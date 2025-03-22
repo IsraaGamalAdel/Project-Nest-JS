@@ -6,6 +6,8 @@ import { ValidationPipe } from '@nestjs/common';
 // import {resolve} from 'node:path'
 // config({path: resolve('./config/.env.dev') });
 
+
+
 async function bootstrap() {
   const port: string | number = process.env.PORT ?? 5000;
 
