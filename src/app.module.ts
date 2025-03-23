@@ -2,10 +2,11 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthenticationModule } from './modules/auth/auth.module';
-import { UserModule } from './modules/user/user.module';
+import { GetUserModule } from './modules/user/user.module';
 import { ProductModule } from './modules/product/product.module';
 import { ConfigModule } from '@nestjs/config';
 import { resolve } from 'path';
+import { MongooseModule } from '@nestjs/mongoose';
 
 
 
@@ -15,7 +16,8 @@ import { resolve } from 'path';
       envFilePath: resolve('./config/.env.dev'),
       isGlobal: true
     }),
-    AuthenticationModule , UserModule, ProductModule
+    MongooseModule.forRoot(process.env.DB_URL ?? 'Not connected DB'),
+    AuthenticationModule , GetUserModule, ProductModule
   ],
   controllers: [AppController],
   providers: [AppService],
