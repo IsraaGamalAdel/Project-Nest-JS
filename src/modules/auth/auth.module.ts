@@ -12,7 +12,8 @@ import { TokenService } from "src/commen/service/token.service";
     imports:[UserModule],
     controllers: [AuthenticationController],
     providers: [AuthenticationService , UserRepositoryService , JwtService , TokenService],
-    exports: []
+    
+    exports: [UserModule ,UserRepositoryService , JwtService , TokenService]
 })
 
 export class AuthenticationModule {}

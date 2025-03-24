@@ -7,6 +7,8 @@ import { ProductModule } from './modules/product/product.module';
 import { ConfigModule } from '@nestjs/config';
 import { resolve } from 'path';
 import { MongooseModule } from '@nestjs/mongoose';
+import { GetCategoryModule } from './modules/category/category.module';
+import { GlobalAuthModule } from './commen/modules/global.auth.modules';
 
 
 
@@ -17,7 +19,11 @@ import { MongooseModule } from '@nestjs/mongoose';
       isGlobal: true
     }),
     MongooseModule.forRoot(process.env.DB_URL ?? 'Not connected DB'),
-    AuthenticationModule , GetUserModule, ProductModule
+    GlobalAuthModule,
+    AuthenticationModule , 
+    GetUserModule, 
+    ProductModule , 
+    GetCategoryModule , 
   ],
   controllers: [AppController],
   providers: [AppService],

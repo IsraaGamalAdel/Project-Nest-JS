@@ -1,4 +1,4 @@
-import { FilterQuery, Model, PopulateOptions } from 'mongoose';
+import { FilterQuery, Model, PopulateOptions, UpdateWriteOpResult } from 'mongoose';
 
 
 
@@ -13,6 +13,17 @@ export abstract class DatabaseRepository<TDocument> {
         populate?: PopulateOptions[]
     }): Promise<TDocument | null> {
         return await this.model.findOne(filter || {}).populate(populate || []);
+    }
+
+
+    async updateOne({
+        filter , 
+        data,
+    } : {
+        filter: FilterQuery<TDocument>,
+        data?: any
+    }): Promise<UpdateWriteOpResult> {
+        return await this.model.updateOne(filter , data);
     }
 
 

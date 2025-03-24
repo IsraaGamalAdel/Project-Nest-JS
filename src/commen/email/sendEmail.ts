@@ -116,7 +116,7 @@ export const sendEmail = async (data: SendMailOptions) => {
         }
 
         const transporter: Transporter = createTransport({
-            host: "smtp.gmail.com",
+            // host: "smtp.gmail.com",
             service: "gmail",
             auth: {
                 user: process.env.SEND_EMAIL,

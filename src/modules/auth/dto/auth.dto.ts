@@ -1,5 +1,14 @@
-import { Allow, IsEmail, IsNotEmpty, IsOptional, IsString, IsStrongPassword, MaxLength, MinLength } from "class-validator";
+import { Allow, IsEmail, IsNotEmpty, IsOptional, IsString, IsStrongPassword, Matches, MaxLength, MinLength } from "class-validator";
 import { IsMatchPassword } from "src/commen/decorators/password.custom.decorators";
+
+
+export class ConfirmEmailDto {
+    
+    @IsEmail()
+    email: string;
+    @Matches(/^[0-9]{6}$/)
+    otp: string;
+}
 
 
 export class LoginDto {

@@ -65,6 +65,9 @@ export class User {
 
     @Prop()
     otp: string
+
+    @Prop({type: Date})
+    changeCredentialTime: Date
 }
 
 // return document type contain document & User

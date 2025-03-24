@@ -1,6 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { languageFunctionMiddleware } from './commen/middleware/service/language.function.middleware';
+import * as express from 'express'
+import { resolve } from 'path';
 
 // import { config } from 'dotenv';
 // import {resolve} from 'node:path'
@@ -12,6 +15,11 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule , { abortOnError: false });  //{ abortOnError: false } returns error message
 
+  app.enableCors({
+    origin: '*',
+  });
+
+  app.use('/uploads' , express.static(resolve('./uploads')));
   
   //Global to Application
   // app.useGlobalPipes(
@@ -24,6 +32,10 @@ async function bootstrap() {
   //   })
   // )
   
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  //Global to Controller Function Language
+  app.use(languageFunctionMiddleware);
+
   await app.listen(port , () => {
     console.log(`Server started on port ${port}`);
   });

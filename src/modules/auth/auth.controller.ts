@@ -1,8 +1,8 @@
-import { Body, Controller, Get, Headers, HttpCode, Param, Post, Query, Redirect, Req, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Headers, HttpCode, Param, Patch, Post, Query, Redirect, Req, UsePipes, ValidationPipe } from '@nestjs/common';
 import { log } from 'console';
 import { AuthenticationService } from './auth.service';
 // import { CustomValidationPipe } from 'src/commen/pipes/password.custom.pipes';
-import { CreateUserDto, LoginDto } from './dto/auth.dto';
+import { ConfirmEmailDto, CreateUserDto, LoginDto } from './dto/auth.dto';
 import { CreateSignUpDto, createUserSchema } from './auth.validation.schema';
 import { CustomClassValidationPipe } from 'src/commen/pipes/password.custom.valiationClass';
 
@@ -44,6 +44,14 @@ export class AuthenticationController {
     ) {
         log({body:body});
         return this.authenticationService.signup(body);
+    }
+
+    @Patch('confirm-email')
+    confirmEmail(
+        @Body()
+        body: ConfirmEmailDto
+    ) {
+        return this.authenticationService.confirmEmail(body)
     }
 
 
