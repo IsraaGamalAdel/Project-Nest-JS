@@ -1,19 +1,22 @@
-import { ObjectId } from "mongoose";
+import { ObjectId, Types } from "mongoose";
+import { IAttachment } from "src/commen/multer/cloud.service";
 
 
 
 
 
 export interface ICategory {
-    _d?: ObjectId;
+    _id?: Types.ObjectId;
 
     name: string;
 
     slug: string;
 
-    logo: string;
+    logo: IAttachment;
 
-    createdBy?: ObjectId;
+    folderId: string;
+
+    createdBy: Types.ObjectId;
 
     createdAt?: Date;
 

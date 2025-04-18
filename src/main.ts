@@ -19,6 +19,8 @@ async function bootstrap() {
     origin: '*',
   });
 
+  app.use("/order/webhook" , express.raw({type: 'application/json'}))
+
   app.use('/uploads' , express.static(resolve('./uploads')));
   
   //Global to Application

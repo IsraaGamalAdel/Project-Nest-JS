@@ -3,12 +3,14 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthenticationModule } from './modules/auth/auth.module';
 import { GetUserModule } from './modules/user/user.module';
-import { ProductModule } from './modules/product/product.module';
+import { GetProductModule } from './modules/product/product.module';
 import { ConfigModule } from '@nestjs/config';
 import { resolve } from 'path';
 import { MongooseModule } from '@nestjs/mongoose';
 import { GetCategoryModule } from './modules/category/category.module';
 import { GlobalAuthModule } from './commen/modules/global.auth.modules';
+import { GetCartModule } from './modules/cart/cart.module';
+import { GetOrderModule } from './modules/order/order.module';
 
 
 
@@ -22,8 +24,10 @@ import { GlobalAuthModule } from './commen/modules/global.auth.modules';
     GlobalAuthModule,
     AuthenticationModule , 
     GetUserModule, 
-    ProductModule , 
-    GetCategoryModule , 
+    GetProductModule , 
+    GetCategoryModule ,
+    GetCartModule,
+    GetOrderModule
   ],
   controllers: [AppController],
   providers: [AppService],
