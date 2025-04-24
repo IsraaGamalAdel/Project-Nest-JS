@@ -27,6 +27,8 @@ export class OrderService {
     private readonly cartService: CartService,
     private paymentService:PaymentService
   ) {}
+
+  
   async create(
     user: UserDocument,
     body: CreateOrderDto
@@ -68,9 +70,13 @@ export class OrderService {
 
     let finalPrice = subTotal;
     if(body.discountPercent) {
-      finalPrice = Math.floor(
-        subTotal - (body.discountPercent / 100) * subTotal
-      )
+      // finalPrice = Math.floor(
+      //   subTotal - (body.discountPercent / 100) * subTotal
+      // )
+
+      finalPrice = Number(
+        (subTotal - (body.discountPercent / 100) * subTotal).toFixed(2)
+      );
     }
 
     const order = await this.orderRepositoryService.create({
@@ -107,7 +113,10 @@ export class OrderService {
   async checkout(
     user: UserDocument,
     orderId: Types.ObjectId
-  ) : Promise<{ message: string , data: { session: Stripe.Response<Stripe.Checkout.Session> } }> {
+  ) : Promise<{ 
+    message: string , 
+    data: { session: Stripe.Response<Stripe.Checkout.Session> , intentClientSecret: any } 
+  }> {
 
     const order = await this.orderRepositoryService.findOne({
       filter: {
@@ -141,7 +150,8 @@ export class OrderService {
                   name: product.name,
               },
               currency:'egp',
-              unit_amount: product.unitPrice * 100,
+              unit_amount: Math.round(product.unitPrice * 100),
+              // unit_amount: product.unitPrice * 100,
           },
         }
       }),
@@ -171,7 +181,8 @@ export class OrderService {
     return {
       message : 'Order checkout successfully',
       data: {
-        session
+        session,
+        intentClientSecret: intent.client_secret   // client_secret to frontend not work
       }
     }
   }
@@ -202,7 +213,8 @@ export class OrderService {
       }
     })
 
-    if(!order){
+    // if(!order){
+    if(!order?.intentId){
       throw new BadRequestException('Order not found')
     }
 
@@ -213,7 +225,8 @@ export class OrderService {
     ){
       //refund
       refund = { refundAmount: order.finalPrice , refundDate: Date.now() };
-      await this.paymentService.refund(order.intentId as string);
+      // await this.paymentService.refund(order.intentId as string);
+      await this.paymentService.refund(order.intentId);
     }
 
     await this.orderRepositoryService.updateOne({

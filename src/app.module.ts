@@ -11,6 +11,7 @@ import { GetCategoryModule } from './modules/category/category.module';
 import { GlobalAuthModule } from './commen/modules/global.auth.modules';
 import { GetCartModule } from './modules/cart/cart.module';
 import { GetOrderModule } from './modules/order/order.module';
+import { GatewayModule } from './modules/gateways/gateway.module';
 
 
 
@@ -27,7 +28,8 @@ import { GetOrderModule } from './modules/order/order.module';
     GetProductModule , 
     GetCategoryModule ,
     GetCartModule,
-    GetOrderModule
+    GetOrderModule,
+    GatewayModule
   ],
   controllers: [AppController],
   providers: [AppService],

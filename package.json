@@ -27,6 +27,8 @@
     "@nestjs/mapped-types": "^2.1.0",
     "@nestjs/mongoose": "^11.0.2",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/platform-socket.io": "^11.0.20",
+    "@nestjs/websockets": "^11.0.20",
     "@types/stripe": "^8.0.416",
     "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
