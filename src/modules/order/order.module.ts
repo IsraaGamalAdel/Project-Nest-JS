@@ -9,6 +9,7 @@ import { CartService } from '../cart/cart.service';
 import { ProductModule } from 'src/DB/model/Product.model';
 import { OrderModule } from 'src/DB/model/Order.model';
 import { PaymentService } from 'src/commen/service/payment.service';
+import { RealTimeGateway } from '../gateways/gateway';
 
 
 
@@ -22,7 +23,8 @@ import { PaymentService } from 'src/commen/service/payment.service';
     CartRepositoryService,
     OrderRepositoryService,
     CartService,
-    PaymentService
+    PaymentService,
+    RealTimeGateway
   ],
 })
 export class GetOrderModule {}

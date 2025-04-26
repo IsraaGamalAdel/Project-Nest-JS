@@ -3,7 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { log } from 'console';
 import { Observable } from 'rxjs';
 import { Roles, rolesKey } from 'src/commen/decorators/roles.decorators';
-import { RoleTypes } from 'src/DB/model/User.model';
+import { RoleTypes, UserDocument } from 'src/DB/model/User.model';
 
 
 
@@ -18,7 +18,7 @@ export class AuthorizationGuard implements CanActivate {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
 
-    const user = context.switchToHttp().getRequest().user;
+    // const user = context.switchToHttp().getRequest().user;
 
     const requiredRoles = this.reflector.getAllAndOverride<RoleTypes[]>(
       rolesKey, 
@@ -28,14 +28,30 @@ export class AuthorizationGuard implements CanActivate {
       ]
     );
 
-    log({
-      requiredRoles,
-      method: context.getHandler(),
-      class: context.getClass(),
-    })
+    // log({
+    //   requiredRoles,
+    //   method: context.getHandler(),
+    //   class: context.getClass(),
+    // })
 
-    if (!requiredRoles.includes(user.role)) {
-      throw new ForbiddenException('Not Authorized to access');
+
+    let user: UserDocument | undefined;
+
+    switch(context['contextType']) {
+          case 'http':
+            user = context.switchToHttp().getRequest().user 
+            break;
+          case 'ws':
+            user = context.switchToWs().getClient().user 
+            break;
+    
+          default:
+            break;
+        }
+
+    if (!user || !requiredRoles.includes(user.role)) {
+      // throw new ForbiddenException('Not Authorized to access');
+      return false;
     }
 
     return true;

@@ -115,3 +115,6 @@ export const UserModule = MongooseModule.forFeatureAsync([
 ])
 
 
+export const connectedUsers = new Map();
+
+

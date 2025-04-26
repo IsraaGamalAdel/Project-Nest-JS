@@ -15,6 +15,7 @@ import { PaymentService } from 'src/commen/service/payment.service';
 import Stripe from 'stripe';
 import { Request } from 'express';
 import { log } from 'node:console';
+import { RealTimeGateway } from '../gateways/gateway';
 
 
 
@@ -25,7 +26,8 @@ export class OrderService {
     private readonly cartRepositoryService:CartRepositoryService<CartDocument>,
     private readonly orderRepositoryService: OrderRepositoryService<OrderDocument>,
     private readonly cartService: CartService,
-    private paymentService:PaymentService
+    private paymentService:PaymentService,
+    private realTimeGateway: RealTimeGateway
   ) {}
 
   
@@ -90,8 +92,10 @@ export class OrderService {
 
     await this.cartService.deleteToCart(user);
 
+    let productStock : { productId: Types.ObjectId , stock: number }[] = [];
+
     for (const product of products) {
-      await this.productRepositoryService.updateOne({
+      const item = await this.productRepositoryService.findOneAndUpdate({
         filter: {
           _id: product.productId
         },
@@ -101,7 +105,15 @@ export class OrderService {
           }
         }
       })
+
+      productStock.push({
+        productId: item._id,
+        stock: item.stock 
+      })
     }
+
+
+    this.realTimeGateway.emitChangesProductStock(productStock);
 
     return {
       message: 'Order created successfully',

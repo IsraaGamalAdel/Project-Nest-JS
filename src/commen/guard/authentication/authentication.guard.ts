@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { log } from 'console';
 import { Observable } from 'rxjs';
 import { TokenService } from 'src/commen/service/token.service';
@@ -14,20 +14,49 @@ export interface IAuthReq extends Request {
 export class AuthenticationGuard implements CanActivate {
 
   constructor (
-    private readonly TokenService: TokenService
+    private readonly tokenService: TokenService
   ){}
 
   async canActivate(
     context: ExecutionContext,
   ): Promise<boolean> {
 
-    const {authorization} = context.switchToHttp().getRequest().headers;
+    log({context});
 
-    log({authorization});
+    let authorization = undefined;
+    switch(context['contextType']) {
+      case 'http':
+        authorization = context.switchToHttp().getRequest().headers.authorization;
 
-    context.switchToHttp().getRequest().user = await this.TokenService.verify({authorization});
+        log(authorization);
 
-    log({user : context.switchToHttp().getRequest().user});
+        if (!authorization) {
+          throw new UnauthorizedException('Authorization header is missing');
+        }
+
+        context.switchToHttp().getRequest().user = await this.tokenService.verify({authorization});
+        break;
+      case 'ws':
+        authorization = context.switchToWs().getClient().handshake?.auth?.authorization ||
+        context.switchToWs().getClient().handshake?.headers?.authorization ;
+
+        log(authorization);
+
+        if (!authorization) {
+          throw new UnauthorizedException('Authorization header is missing');
+        }
+
+        context.switchToWs().getClient().user = 
+          await this.tokenService.verify({authorization});
+        break;
+
+      default:
+        break;
+    }
+
+    if(!authorization){
+      return false;
+    }
 
     return true;
   }

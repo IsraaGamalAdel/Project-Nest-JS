@@ -87,5 +87,30 @@ export abstract class DatabaseRepository<TDocument> {
         return await this.model.create(data);
     }
 
+
+    // async findOneAndUpdate({
+    //     filter , 
+    //     data,
+    // } : {
+    //     filter: FilterQuery<TDocument>,
+    //     data: UpdateQuery<TDocument>,
+    // }): Promise<TDocument | null> {
+    //     return await this.model.findOneAndUpdate(filter , data , {new: true});
+    // }
+
+    async findOneAndUpdate({
+        filter, 
+        data,
+    }: {
+        filter: FilterQuery<TDocument>,
+        data: UpdateQuery<TDocument>,
+    }): Promise<TDocument> {
+        const result = await this.model.findOneAndUpdate(filter, data, {new: true});
+        if (!result) {
+            throw new Error("Document not found");
+        }
+        return result;
+    }
+
 }
 
