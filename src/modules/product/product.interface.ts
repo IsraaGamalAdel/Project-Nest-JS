@@ -1,5 +1,6 @@
 import { Types } from "mongoose";
 import { IAttachment } from "src/commen/multer/cloud.service";
+import { IUser } from "../user/user.interface";
 
 
 export enum ProductSize {
@@ -38,7 +39,7 @@ export interface IProduct extends IProductInputs{
     image: IAttachment;
     gallery?: IAttachment[];
 
-    createdBy: Types.ObjectId;
+    createdBy: Types.ObjectId | IUser;
 
     createdAt?: Date;
     updatedAt?: Date

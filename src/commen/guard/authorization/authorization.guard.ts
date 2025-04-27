@@ -1,5 +1,6 @@
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { GqlExecutionContext } from '@nestjs/graphql';
 import { log } from 'console';
 import { Observable } from 'rxjs';
 import { Roles, rolesKey } from 'src/commen/decorators/roles.decorators';
@@ -44,7 +45,11 @@ export class AuthorizationGuard implements CanActivate {
           case 'ws':
             user = context.switchToWs().getClient().user 
             break;
-    
+          case 'graphql':
+              user = GqlExecutionContext.create(context).getContext().req.user
+          
+              log(user)
+              break;
           default:
             break;
         }

@@ -9,6 +9,7 @@ import { CloudMulterOptions } from 'src/commen/multer/cloud.multer.options';
 import { validationFile } from 'src/commen/multer/options.multer';
 import { MulterValidationInterceptor } from 'src/commen/multer/multer-validation/multer-validation.interceptor';
 import { FindProductFilter, UpdateProductDto, UpdateProductIdDto } from './dto/Update.dto';
+import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
 
 
 
@@ -78,5 +79,22 @@ export class ProductController {
       @Query() query: FindProductFilter
     ){
         return this.productService.listFind( query );
+    }
+
+    
+    @CacheTTL(5000)// 5 seconds
+    @UseInterceptors(CacheInterceptor)
+    @Get('all/product')
+    getAllProduct(){
+        return this.productService.getAllProduct(  );
+    }
+
+
+    @UseInterceptors(CacheInterceptor)
+    // @CacheTTL(5)// 5 seconds
+    // @CacheKey('events')
+    @Get("test")
+    test() {
+      return this.productService.test();
     }
 }

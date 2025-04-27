@@ -1,4 +1,5 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { GqlExecutionContext } from '@nestjs/graphql';
 import { log } from 'console';
 import { Observable } from 'rxjs';
 import { TokenService } from 'src/commen/service/token.service';
@@ -17,6 +18,7 @@ export class AuthenticationGuard implements CanActivate {
     private readonly tokenService: TokenService
   ){}
 
+  
   async canActivate(
     context: ExecutionContext,
   ): Promise<boolean> {
@@ -49,7 +51,18 @@ export class AuthenticationGuard implements CanActivate {
         context.switchToWs().getClient().user = 
           await this.tokenService.verify({authorization});
         break;
+      case 'graphql':
+        authorization = GqlExecutionContext.create(context).getContext().req.headers?.authorization;
 
+        if (!authorization) {
+          throw new UnauthorizedException('Authorization header is missing');
+        }
+
+        GqlExecutionContext.create(context).getContext().req.user = 
+          await this.tokenService.verify({authorization});
+
+        log(authorization)
+        break;
       default:
         break;
     }

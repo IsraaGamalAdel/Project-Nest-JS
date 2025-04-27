@@ -1,4 +1,6 @@
 import { Types } from "mongoose";
+import { IUser } from "../user/user.interface";
+import { IProduct } from "../product/product.interface";
 
 
 
@@ -20,7 +22,7 @@ export enum OrderStatus{
 export interface IOrderProduct {
     _id?: Types.ObjectId;
     name: string;
-    productId: Types.ObjectId;
+    productId: Types.ObjectId | IProduct;
     quantity: number;
     unitPrice: number;
     finalPrice: number;
@@ -45,8 +47,8 @@ export interface IOrder extends IOrderInputs {
 
     intentId?: string;
 
-    createdBy: Types.ObjectId;
-    updatedBy?: Types.ObjectId;
+    createdBy: Types.ObjectId | IUser;
+    updatedBy?: Types.ObjectId | IUser;
 
     paidAt?: Date;
     rejectedReason?: string;

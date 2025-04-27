@@ -83,6 +83,33 @@ export abstract class DatabaseRepository<TDocument> {
     }
 
 
+    
+    // Edit
+    async update({
+        filter , 
+        data,
+        // select,
+        // populate
+    } : {
+        filter: FilterQuery<TDocument>,
+        data: UpdateQuery<TDocument>,
+        // select: 
+        
+    }): Promise<TDocument | null> {
+        let query = this.model.findOneAndUpdate( filter , data , {
+            new: true,
+            runValidators: true
+        })
+
+        // if(select) query = query.select(select)
+
+        // if(populate) query = query.populate(populate)
+
+        return query.exec();
+    }
+
+
+
     async create(data: Partial<TDocument>) : Promise<TDocument> {
         return await this.model.create(data);
     }
@@ -112,5 +139,46 @@ export abstract class DatabaseRepository<TDocument> {
         return result;
     }
 
+
+    async deleteOne({
+        filter
+    }: {
+        filter: FilterQuery<TDocument>
+    }): Promise<{ deletedCount: number }> {
+        const result = await this.model.deleteOne(filter);
+        
+        if (result.deletedCount === 0) {
+            throw new Error("Document not found");
+        }
+        return { deletedCount: result.deletedCount };
+    }
+
+
+    async findByIdAndDelete({
+        filter,
+        data
+    }: {
+        filter: FilterQuery<TDocument>,
+        data: UpdateQuery<TDocument>,
+    }): Promise<TDocument> {
+        const deletedId = await this.model.findByIdAndDelete(filter , data);
+        if (!deletedId) {
+            throw new Error("Document not found");
+        }
+        return deletedId;
+    }
+
+
+    async findOneAndDelete({
+        filter
+    }: {
+        filter: FilterQuery<TDocument>
+    }): Promise<TDocument> {
+        const deletedDoc = await this.model.findOneAndDelete(filter);
+        if (!deletedDoc) {
+            throw new Error("Document not found");
+        }
+        return deletedDoc;
+    }
 }
 

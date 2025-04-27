@@ -4,8 +4,8 @@ import { UpdateOrderDto } from './dto/update-order.dto';
 import { UserDocument } from 'src/DB/model/User.model';
 import { CartRepositoryService } from 'src/DB/repository/Cart.repository.service';
 import { CartDocument } from 'src/DB/model/Card.model';
-import { IOrderProduct, OrderStatus, PaymentMethod } from './order.interface';
-import { ProductRepositoryService } from 'src/DB/repository/Product.repository.service';
+import { IOrder, IOrderProduct, OrderStatus, PaymentMethod } from './order.interface';
+import { ProductRepositoryService, ProductsPopulateList } from 'src/DB/repository/Product.repository.service';
 import { ProductDocument } from 'src/DB/model/Product.model';
 import { OrderRepositoryService } from 'src/DB/repository/Order.repository.service';
 import { OrderDocument } from 'src/DB/model/Order.model';
@@ -270,8 +270,19 @@ export class OrderService {
   }
 
   
-  findAll() {
-    return `This action returns all order`;
+  async findAll() : Promise<any> {
+
+    const orders = await this.orderRepositoryService.find({ 
+      populate: [
+        { path: 'createdBy' } , 
+        { path: 'products' , populate: 
+          { path: 'productId' , populate: ProductsPopulateList } 
+        } ,
+      ]
+    });
+
+    // log('orders' , orders);
+    return orders;
   }
 
   findOne(id: number) {

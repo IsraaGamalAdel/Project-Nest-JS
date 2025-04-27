@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { UserDocument } from 'src/DB/model/User.model';
 import { CreateProductDto } from './dto/Create.dto';
 import { log } from 'console';
@@ -12,6 +12,8 @@ import { FindProductFilter, UpdateProductDto } from './dto/Update.dto';
 import { FilterQuery } from 'mongoose';
 import { IProduct } from './product.interface';
 import { IPaginate } from 'src/DB/repository/db.repository';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 
 
@@ -19,10 +21,22 @@ import { IPaginate } from 'src/DB/repository/db.repository';
 export class ProductService {
 
     constructor (
+        @Inject(CACHE_MANAGER) private cacheManager: Cache,
         private readonly cloudinaryService: CloudinaryService,
         private readonly productRepositoryService: ProductRepositoryService<ProductDocument>,
         private readonly categoryRepositoryService: CategoryRepositoryService<CategoryDocument>
     ) {}
+
+    
+    async test(
+        
+    ): Promise<{message: string}> {
+        log('test');
+        return {
+            message: 'test update'
+        }
+    }
+
 
     async create( 
         user: UserDocument,
@@ -179,6 +193,22 @@ export class ProductService {
             products: IProduct[] | [] | IPaginate<IProduct> 
         }
     } > {
+
+        let cacheNameKey = 'product-list-find' 
+        if(Object.keys(query)?.length) {
+            cacheNameKey = JSON.stringify(query)
+        }
+        let cacheData = await this.cacheManager.get(cacheNameKey);
+        log({cacheData :cacheData , cacheNameKey})
+        if(cacheData){
+            return {
+                message: 'list Products from cache' , 
+                data: {
+                    products: JSON.parse(cacheData as string)
+                }
+            }
+        }
+
         let filter : FilterQuery<ProductDocument> = {}
         if(query?.name) {
             filter = {
@@ -206,6 +236,37 @@ export class ProductService {
             populate: [{ path: 'categoryId' }]
         })
 
+
+        const data = await this.cacheManager.set(
+            cacheNameKey,
+            JSON.stringify(products),
+            1000 * 60
+        )
+
+        log({data: data})
+
+        return {
+            message: 'list Products' , 
+            data: {
+                products
+            }
+        }
+    }
+
+
+    async getAllProduct( ) : Promise< {
+        message: string,
+        data:{
+            products: IProduct[] | [] | IPaginate<IProduct> 
+        }
+    } > {
+
+        const products = await this.productRepositoryService.find({
+            populate: [{ path: 'categoryId' }]
+        })
+
+        log('products'  );
+
         return {
             message: 'list Products' , 
             data: {
@@ -222,4 +283,5 @@ export class ProductService {
 
         return price > 0 ? price : 0
     }
+
 }

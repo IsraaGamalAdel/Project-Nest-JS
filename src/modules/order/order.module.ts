@@ -10,6 +10,7 @@ import { ProductModule } from 'src/DB/model/Product.model';
 import { OrderModule } from 'src/DB/model/Order.model';
 import { PaymentService } from 'src/commen/service/payment.service';
 import { RealTimeGateway } from '../gateways/gateway';
+import { OrderResolver } from './order.resolver';
 
 
 
@@ -24,7 +25,8 @@ import { RealTimeGateway } from '../gateways/gateway';
     OrderRepositoryService,
     CartService,
     PaymentService,
-    RealTimeGateway
+    RealTimeGateway,
+    OrderResolver
   ],
 })
 export class GetOrderModule {}

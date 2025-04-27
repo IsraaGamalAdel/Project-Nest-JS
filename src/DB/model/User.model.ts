@@ -57,6 +57,9 @@ export class User {
     @Prop()
     phone: string
 
+    @Prop({type: Date})
+    DOB: Date
+
     @Prop({required: true , enum: GenderTypes , default: GenderTypes.female})
     gender: GenderTypes
 
