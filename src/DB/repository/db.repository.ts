@@ -14,6 +14,13 @@ export interface IPaginate<T> {
 export abstract class DatabaseRepository<TDocument> {
     protected constructor( protected readonly model: Model<TDocument>){}
 
+
+    async create(data: Partial<TDocument>) : Promise<TDocument> {
+        return await this.model.create(data);
+    }
+
+
+    // find
     async find({
         filter,
         select, 
@@ -72,6 +79,7 @@ export abstract class DatabaseRepository<TDocument> {
     }
 
 
+    // update
     async updateOne({
         filter , 
         data,
@@ -83,38 +91,43 @@ export abstract class DatabaseRepository<TDocument> {
     }
 
 
-    
-    // Edit
+    async updateMany({
+        filter, 
+        data
+    }: {
+        filter: FilterQuery<TDocument>,
+        data: UpdateQuery<TDocument>
+    }): Promise<UpdateWriteOpResult> {
+        return this.model.updateMany(filter, data, {
+            runValidators: true
+        }).exec();
+    }
+
+
     async update({
         filter , 
         data,
-        // select,
-        // populate
+        select,
+        populate
     } : {
         filter: FilterQuery<TDocument>,
         data: UpdateQuery<TDocument>,
-        // select: 
-        
+        select?: string | any,
+        populate?: any
     }): Promise<TDocument | null> {
         let query = this.model.findOneAndUpdate( filter , data , {
             new: true,
             runValidators: true
         })
 
-        // if(select) query = query.select(select)
+        if(select) query = query.select(select)
 
-        // if(populate) query = query.populate(populate)
+        if(populate) query = query.populate(populate)
 
         return query.exec();
     }
 
-
-
-    async create(data: Partial<TDocument>) : Promise<TDocument> {
-        return await this.model.create(data);
-    }
-
-
+    
     // async findOneAndUpdate({
     //     filter , 
     //     data,
@@ -140,6 +153,7 @@ export abstract class DatabaseRepository<TDocument> {
     }
 
 
+    //delete
     async deleteOne({
         filter
     }: {
@@ -147,9 +161,9 @@ export abstract class DatabaseRepository<TDocument> {
     }): Promise<{ deletedCount: number }> {
         const result = await this.model.deleteOne(filter);
         
-        if (result.deletedCount === 0) {
-            throw new Error("Document not found");
-        }
+        // if (result.deletedCount === 0) {
+        //     throw new Error("Document not found");
+        // }
         return { deletedCount: result.deletedCount };
     }
 

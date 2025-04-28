@@ -18,6 +18,7 @@ import { createKeyv } from '@keyv/redis';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { GetCouponModule } from './modules/coupon/coupon.module';
+import { GetReviewModule } from './modules/review/review.module';
 
 
 
@@ -57,7 +58,8 @@ import { GetCouponModule } from './modules/coupon/coupon.module';
     GetCartModule,
     GetOrderModule,
     GatewayModule,
-    GetCouponModule
+    GetCouponModule,
+    GetReviewModule
   ],
   controllers: [AppController],
   providers: [AppService],
